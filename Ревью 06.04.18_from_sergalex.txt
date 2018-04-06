@@ -1,0 +1,54 @@
+1 Переименовать класс MainDialogue в MainController или что-то типо из этого.
+
+
+MainDialogue.class
+
+2 В методе mainDialogueHolder( ); Когда обрабатываешь ошибку не глуши ее в блоке catch.    
+
+3 Когда я делаю подключение (на мое умострение) в параметрах команды слишком много параметров.
+  В техническом задании написано connect|database|username|password 
+
+4 Может это уже писали в slack chat. В каждом класе пакета jdbcOperation, выполняеться 
+  взаимодействие с базой данных, в дальнейшем будут сложно расширять проект. По моему мнению лучше 
+  сделать отдельный класс  который будет имплементировать интерфейс с методами для взаимодействия 
+  с базой данных. Потом в каджом класе команды ты будешь взаимодействовать только с интефейсами 
+  DBManager и View. 
+  
+  Тоесть к примеру 
+  
+  public interface Databasemanager{
+ 
+  void connected(String dataBaseName, String user, String password);
+	
+  /...
+  /...другие методы
+   
+  }
+  
+  public class JdbcManager implements  Databasemanager{
+
+	void connected(String dataBaseName, String user, String password){
+		здесь выполняеться непосредственное взаимодействия с базой данных 
+	}
+
+	/...
+	/... Дрегие методы
+  }	
+
+  
+  public class 	DBPostgreConnecter {
+
+     Databasemanager databaseManager;
+     View view;	
+ 
+     public void process(){
+	 databasemanager.connected(arg,arg1,arrg2); // здесь ты работаешь с интерфейсом.
+     }	
+	
+  }
+  
+	
+  Так ты сможешь произвести быструю замену реализации, сейчас ты взаимодействуешь
+  JdbcDatabaseManager, потом вдруг ты захочешь хранить  данные в файловой системе, и можно 
+  создать новый клас, но реализация в класе  DBPostgreConnecter не будет затронута.
+ 
