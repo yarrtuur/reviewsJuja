@@ -1,0 +1,87 @@
+interface DBManager
+
+1. makeConnection, updateRows, deleteRows, truncateTable, getTableData, getTableColumns, getTablesNames в сигнатуре метода объ€влено SQLException,
+которое не реализовано. 
+----------------------------------------
+class JDBCManager 
+
+ 1.  @Override
+    public boolean isConnected() {
+        return (connection != null);
+    }
+
+    public void checkIfConnected() {
+        if (connection == null) {
+            throw new RuntimeException("Connection to DB is not established. Please connect to you DB");
+        }
+    }
+
+” теб€ есть реализованный метод проверки коннекта isConnected() (интерфейса interface DBManager).
+≈сть смысл либо использовать его в твоем методе checkIfConnected()
+ вместо  if (connection == null) => if ( isConnected() ).
+Ћибо отказатьс€ от метода checkIfConnected() в командах и обрабатывать там результат вызова isConnected() и возвращать
+, как вариант return 0; в методах createTable, insertRows, updateRows и др.   
+
+2.  public String getTablesNames() :
+ƒл€ отображени€ данных о существующих таблицах ты используешь переменную String result; Ћучше сделать через StringBuilder дл€ 
+более рационального использовани€ пам€ти. StringBuilder может динамически расшир€тьс€, обычный String более топорен в случае
+ конкатенации.
+
+3. makeConnection(String dbName, String user, String password):
+ѕри наличии метода isConnected() ты почему то провер€ешь коннект напр€мую if (connection != null). 
+’от€, вижу там пометку про рефактор на будущее.
+----------------------------------------
+class Create
+
+1. dbManager.createTable(String name, String[] columns) возвращает int, но при этом значение никак не обрабатываетс€.
+
+2. Ќе совсем пон€тна реализаци€ метода printError(String command), переменна€ command) не используетс€.
+
+3. константу COMMAND можно сделать приватной
+----------------------------------------
+class Insert
+
+1. «ачем повторно делать проверку :
+ if (!isExecutable(command)) {
+            printError(command);
+            return;
+        }
+метод isExecutable(command))  нужен только дл€ того чтоб определить вызывать ли метод command.execute(input); определенной комманды
+
+2. Ќе совсем пон€тна реализаци€ метода printError(String command), переменна€ command) не используетс€. 
+¬озможно, этот метод нужно так же включить в интерфейс.
+
+3. константу COMMAND можно сделать приватной
+----------------------------------------
+class Update
+
+п.1, 2, 3 аналогичны классу Insert
+----------------------------------------
+class ViewData
+
+п.1, 2, 3 аналогичны классу Insert
+----------------------------------------
+class Clear
+
+п.1, 2, 3 аналогичны классу Insert
+----------------------------------------
+class Delete
+
+п.1, 2, 3 аналогичны классу Insert
+----------------------------------------
+class Drop
+
+п.1, 2, 3 аналогичны классу Insert
+----------------------------------------
+class Unsupported
+
+1. константа COMMAND не нужна.
+----------------------------------------
+P.S.: “есты € не провер€л. я сам еще в разбираюсь в этой теме.
+----------------------------------------
+P.P.S.: я не большой знаток английского, но по-моему ты смешиваешь разные времена :
+пример : "Data wasn't  deleted from table "  - 
+ ажись должно быть: 
+	 "Data didn't delete from table" - Past Simple
+     или "Data haven't deleted from table " - Present Perfect
+     или "Data wasn't deleting from table " - Past Continous
